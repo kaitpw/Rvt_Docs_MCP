@@ -1,29 +1,31 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { extractRvtDocsText } from "../lib/extractor.ts";
 import { searchWrapper } from "../lib/searchWrapper.ts";
 import { validators } from "../types/toolValidators.ts";
 
 /**
- * Creates the search tool for the MCP server
+ * Creates the retrieve documentation tool for the MCP server
  * @param server - The MCP server instance
  */
-export function createSearchTool(server: McpServer) {
+export function createRetrieveFirstResultTool(server: McpServer) {
   server.tool(
-    "search-docs",
+    "retrieve-docs-first-result",
     {
       query: validators.query,
       year: validators.year,
-      maxResults: validators.maxResults,
     },
-    async ({ query, year, maxResults }) => {
-      try {
-        // Search for the query
-        const results = await searchWrapper(query, year, maxResults);
+    async ({ query, year }) => {
+      const search = await searchWrapper(query, year, 1);
+      const url = search[0].url;
+      const fullUrl = url.startsWith("/")
+        ? `https://rvtdocs.com${url}`
+        : `https://rvtdocs.com/${url}`;
 
-        // return json of the search results
+      try {
         return {
           content: [{
             type: "text",
-            text: JSON.stringify(results, null, 2),
+            text: await extractRvtDocsText(fullUrl),
           }],
         };
       } catch (error) {
@@ -33,7 +35,8 @@ export function createSearchTool(server: McpServer) {
         return {
           content: [{
             type: "text",
-            text: `Error searching Revit API documentation: ${errorMessage}`,
+            text:
+              `Error extracting documentation from ${fullUrl}: ${errorMessage}`,
           }],
         };
       }
