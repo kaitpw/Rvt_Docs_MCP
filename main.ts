@@ -7,7 +7,7 @@ import { createExtractTool } from "./tools/extract.ts";
 
 // Create the MCP server for Revit API documentation
 const server = new McpServer({
-  name: "revit-api-docs",
+  name: "revit-docs-mcp",
   version: "1.0.0",
 });
 

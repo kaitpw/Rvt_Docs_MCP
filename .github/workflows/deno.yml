@@ -11,6 +11,18 @@ permissions:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-pc-windows-msvc
+            platform: windows
+            extension: .exe
+          - target: x86_64-apple-darwin
+            platform: macos-x64
+            extension: ""
+          - target: aarch64-apple-darwin
+            platform: macos-arm64
+            extension: ""
 
     steps:
       - name: Checkout repository
@@ -21,18 +33,21 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Compile executable
-        run: deno compile --output dist/RvtDocsMCP main.ts
+      - name: Create dist directory
+        run: mkdir -p dist
 
-      - name: Upload build artifact (optional)
+      - name: Compile executable
+        run: deno compile -A --target ${{ matrix.target }} --output dist/Rvt_Docs_MCP-${{ matrix.platform }}${{ matrix.extension }} main.ts
+
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RvtDocsMCP
-          path: dist/RvtDocsMCP
+          name: Rvt_Docs_MCP-${{ matrix.platform }}
+          path: dist/Rvt_Docs_MCP-${{ matrix.platform }}${{ matrix.extension }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/RvtDocsMCP
+          files: dist/Rvt_Docs_MCP-${{ matrix.platform }}${{ matrix.extension }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
