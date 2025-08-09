@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { extractRvtDocsText } from "../lib/extractor.ts";
-import { validators } from "../types/toolValidators.ts";
+import { descriptions, validators } from "../lib/toolsCommon.ts";
 
 /**
  * Creates the extract documentation tool for the MCP server
@@ -11,9 +11,7 @@ export function createExtractTool(server: McpServer) {
     "extract-doc",
     {
       title: "Extract Documentation Page",
-      description:
-        `Extract the content of a singular Revit API documentation page based on a url slug pointing to version year and the page's ID.
-        The resulting data will be a best-attempt markdown extraction of the page's html`,
+      description: descriptions.extract,
       inputSchema: {
         urlSlug: validators.urlSlug,
       },

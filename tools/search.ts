@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { searchWrapper } from "../lib/search.ts";
-import { validators } from "../types/toolValidators.ts";
+import { descriptions, validators } from "../lib/toolsCommon.ts";
 
 /**
  * Creates the search tool for the MCP server
@@ -11,8 +11,7 @@ export function createSearchTool(server: McpServer) {
     "search-docs",
     {
       title: "Search All Revit API Documentation Entities",
-      description:
-        "Search for a Revit API entity based mostly on substring matching. Can accept '<Class>.<Member>' search format for 2025 and 2026.",
+      description: descriptions.search,
       inputSchema: {
         queryString: validators.queryString,
         queryTypes: validators.queryTypes,

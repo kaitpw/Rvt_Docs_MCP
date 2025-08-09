@@ -44,12 +44,5 @@ export const SearchResultTypes = [
   "Properties",
   "Members",
   "Interface",
-  "Enum",
+  "Enumeration",
 ] as const;
-
-export const ZTypeFromImageUrl = z.string().transform((imageUrl) => {
-  for (const t of SearchResultTypes) {
-    if (imageUrl.includes(`${t}.gif`)) return t;
-  }
-  return "Unknown";
-});

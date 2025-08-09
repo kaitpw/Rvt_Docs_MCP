@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { extractRvtDocsText } from "../lib/extractor.ts";
 import { searchWrapper } from "../lib/search.ts";
-import { validators } from "../types/toolValidators.ts";
+import { descriptions, validators } from "../lib/toolsCommon.ts";
 
 /**
  * Creates the retrieve documentation tool for the MCP server
@@ -12,17 +12,15 @@ export function createRetrieveFirstResultTool(server: McpServer) {
     "retrieve-docs-first-result",
     {
       title: "Retrieve First Result from Revit API Documentation",
-      description:
-        `Retrieve a Revit API documentation page matching the first search result based on the query and year.
-        The resulting data will be a best-attempt markdown extraction of the page's html.
-        Use this tool to retrieve the docs for a Revit API entity for which `,
+      description: descriptions.retrieveFirstResult,
       inputSchema: {
         queryString: validators.queryString,
+        queryTypes: validators.queryTypes,
         year: validators.year,
       },
     },
-    async ({ queryString, year }) => {
-      const search = await searchWrapper(queryString, year, 1);
+    async ({ queryString, queryTypes, year }) => {
+      const search = await searchWrapper(queryString, year, 1, queryTypes);
       const url = search[0].url;
       const fullUrl = url.startsWith("/")
         ? `https://rvtdocs.com${url}`
@@ -31,7 +29,7 @@ export function createRetrieveFirstResultTool(server: McpServer) {
       try {
         return {
           content: [{
-            type: "text",
+            type: "text" as const,
             text: await extractRvtDocsText(fullUrl),
           }],
         };
@@ -41,7 +39,7 @@ export function createRetrieveFirstResultTool(server: McpServer) {
           : "Unknown error occurred";
         return {
           content: [{
-            type: "text",
+            type: "text" as const,
             text:
               `Error extracting documentation from ${fullUrl}: ${errorMessage}`,
           }],

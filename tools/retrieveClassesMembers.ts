@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { searchWrapper } from "../lib/search.ts";
 import { extractRvtDocsText } from "../lib/extractor.ts";
-import { validators } from "../types/toolValidators.ts";
+import { descriptions, validators } from "../lib/toolsCommon.ts";
 
 /**
  * Creates the search tool for the MCP server
@@ -12,12 +12,7 @@ export function createRetrieveClassesMembersTool(server: McpServer) {
     "retrieve-docs-classes-members",
     {
       title: "Retrieve Class Members",
-      description:
-        `Retrieve the Revit API documentation page detailing all of a class's members based on a search query and year. 
-        In the case of multiple search matches, multiple results will be returned. 
-        Documentation years below 2025 will return a dedicated "Members" page while 2025 and above will return a "Class" page.
-        Use this tool to perform high-level exploration of the Revit API. 
-        Then perform more granular searches using the "search-docs" tool as needed.`,
+      description: descriptions.retrieveClassesMembers,
       inputSchema: {
         queryString: validators.queryString,
         year: validators.year,
@@ -25,10 +20,13 @@ export function createRetrieveClassesMembersTool(server: McpServer) {
       },
     },
     async ({ queryString, year, maxResults }) => {
-      const type = year >= 2025 ? "Class" : "Members";
-      const searches = await searchWrapper(queryString, year, maxResults, [
-        type,
-      ]);
+      const types = ["Methods", "Properties"] as const;
+      const searches = await searchWrapper(
+        queryString,
+        year,
+        maxResults,
+        types,
+      );
       const results = [];
       for (const s of searches) {
         const fullUrl = s.url.startsWith("/")

@@ -3,8 +3,8 @@ import {
   type SearchResponseRvtDocsCom,
   type SearchResult,
   SearchResultTypes,
-  ZTypeFromImageUrl,
 } from "../types/index.ts";
+import { z } from "zod";
 
 export async function searchWrapper(
   query: string,
@@ -42,7 +42,6 @@ function dedupeByUrl(results: SearchResult[]): SearchResult[] {
 
 function sortByType(results: SearchResult[]): SearchResult[] {
   const typeOrder = [
-    "Members",
     "Class",
     "Methods",
     "Properties",
@@ -58,9 +57,9 @@ function sortByType(results: SearchResult[]): SearchResult[] {
     return aIndex - bIndex;
   });
 }
+
 /**
  * Searches Revit API documentation using the rvtdocs.com search endpoint
- * This is necessary to keep because it makes "Properties"
  */
 export async function searchRvtDocsCom(
   query: string,
@@ -123,6 +122,7 @@ export async function searchRvtDocsCom(
 
 /**
  * Searches Revit API documentation using the www.revitapidocs.com search endpoint
+ * This is necessary to keep because it makes "Properties" and "Methods" pages available
  */
 export async function searchRevitApiDocsCom(
   query: string,
@@ -152,12 +152,14 @@ export async function searchRevitApiDocsCom(
 
     if (data.sections?.Products) {
       for (const item of data.sections.Products) {
-        results.push({
-          title: item.value,
-          description: item.data.description ?? "",
-          url: `/${year}/${item.data.url.split(".")[0]}`,
-          type: ZTypeFromImageUrl.parse(item.data.image_url),
-        });
+        if (TypeFromTitle.parse(item.value) !== "Members") {
+          results.push({
+            title: item.value,
+            description: item.data.description ?? "",
+            url: `/${year}/${item.data.url.split(".")[0]}`,
+            type: TypeFromTitle.parse(item.value),
+          });
+        }
       }
     }
 
@@ -172,3 +174,13 @@ export async function searchRevitApiDocsCom(
     throw error;
   }
 }
+
+const TypeFromTitle = z.string().transform((title) => {
+  const parts = title.trim().split(/\s+/);
+  const lastPart = parts[parts.length - 1];
+
+  for (const t of SearchResultTypes) {
+    if (lastPart === t) return t;
+  }
+  return "Unknown";
+});
