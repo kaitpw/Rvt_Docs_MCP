@@ -9,7 +9,7 @@ permissions:
   contents: write # Needed to create releases
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -45,9 +45,26 @@ jobs:
           name: Rvt_Docs_MCP-${{ matrix.platform }}
           path: dist/Rvt_Docs_MCP-${{ matrix.platform }}${{ matrix.extension }}
 
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create release directory
+        run: mkdir -p release
+
+      - name: Move artifacts to release directory
+        run: |
+          find artifacts -type f -exec cp {} release/ \;
+          ls -la release/
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/Rvt_Docs_MCP-${{ matrix.platform }}${{ matrix.extension }}
+          files: release/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
