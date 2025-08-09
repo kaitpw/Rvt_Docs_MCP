@@ -1,0 +1,38 @@
+name: Deno Build & Release
+
+on:
+  push:
+    tags:
+      - "v*" # Trigger only when pushing a version tag like v1.0.0
+
+permissions:
+  contents: write # Needed to create releases
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Compile executable
+        run: deno compile --output dist/RvtDocsMCP main.ts
+
+      - name: Upload build artifact (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: RvtDocsMCP
+          path: dist/RvtDocsMCP
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/RvtDocsMCP
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
