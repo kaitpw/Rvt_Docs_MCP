@@ -30,7 +30,7 @@ To use the MCP server, add the executable for your operating system into your mc
       "command": "path/to/Rvt_Docs_MCP-macos-x64"
     },
     "revit-api-docs (windows)": {
-      "command": "path/to/Rvt_Docs_MCP-windows.exe"
+      "command": "path\\to\\Rvt_Docs_MCP-windows.exe"
     }
   }
 }
