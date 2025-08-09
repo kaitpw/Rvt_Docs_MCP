@@ -7,10 +7,16 @@ import { validators } from "../types/toolValidators.ts";
  * @param server - The MCP server instance
  */
 export function createExtractTool(server: McpServer) {
-  server.tool(
+  server.registerTool(
     "extract-doc",
     {
-      urlSlug: validators.urlSlug,
+      title: "Extract Documentation Page",
+      description:
+        `Extract the content of a singular Revit API documentation page based on a url slug pointing to version year and the page's ID.
+        The resulting data will be a best-attempt markdown extraction of the page's html`,
+      inputSchema: {
+        urlSlug: validators.urlSlug,
+      },
     },
     async ({ urlSlug }) => {
       const fullUrl = urlSlug.startsWith("/")

@@ -1,4 +1,4 @@
-import { searchWrapper } from "../lib/searchWrapper.ts";
+import { searchWrapper } from "../lib/search.ts";
 import type { SearchResult } from "../types/index.ts";
 
 async function testSearch() {

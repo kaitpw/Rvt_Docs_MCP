@@ -1,34 +1,55 @@
-import type { z } from "zod";
 import {
   type SearchResponseRevirApiDocsCom,
   type SearchResponseRvtDocsCom,
   type SearchResult,
-  type SearchResultTypes,
+  SearchResultTypes,
   ZTypeFromImageUrl,
 } from "../types/index.ts";
 
 export async function searchWrapper(
   query: string,
   year: number,
-  maxResults: number,
-  types: Array<z.infer<typeof ZTypeFromImageUrl>> = [
-    "Class",
-    "Constructor",
-    "Method",
-    "Property",
-    "Properties",
-    "Members",
-    "Interface",
-    "Enum",
-    "Unknown",
-  ],
+  max: number,
+  types: ReadonlyArray<(typeof SearchResultTypes)[number]> = SearchResultTypes,
 ): Promise<SearchResult[]> {
-  const results1 = await searchRvtDocsCom(query, year, maxResults * 2);
-  const results2 = await searchRevitApiDocsCom(query, year, maxResults * 2);
-  let results = Array.from(new Set([...results1, ...results2]));
-  results = results.filter((r) => types.includes(r.type as SearchResultTypes));
-  const typeOrder = ["Members", "Class", "Constructor", "Enum"];
-  results.sort((a, b) => {
+  const results1 = await searchRvtDocsCom(query, year, max * 2, types);
+  const results2 = await searchRevitApiDocsCom(query, year, max * 2, types);
+
+  const allResults = [...results1, ...results2];
+  const dedupedResults = dedupeByUrl(allResults);
+  const sortedResults = sortByType(dedupedResults);
+  return sortedResults.slice(0, max);
+}
+
+function dedupeByUrl(results: SearchResult[]): SearchResult[] {
+  const urlMap = new Map<string, SearchResult>();
+  const countEmpty = (obj: SearchResult) =>
+    Object.values(obj).filter((v) => v === "").length;
+
+  for (const result of results) {
+    const url = result.url;
+    if (!urlMap.has(url)) {
+      urlMap.set(url, result);
+    } else {
+      const existing = urlMap.get(url);
+      if (existing && countEmpty(result) < countEmpty(existing)) {
+        urlMap.set(url, result);
+      }
+    }
+  }
+  return Array.from(urlMap.values());
+}
+
+function sortByType(results: SearchResult[]): SearchResult[] {
+  const typeOrder = [
+    "Members",
+    "Class",
+    "Methods",
+    "Properties",
+    "Constructor",
+  ];
+
+  return results.sort((a, b) => {
     const aIndex = typeOrder.indexOf(a.type);
     const bIndex = typeOrder.indexOf(b.type);
     if (aIndex === -1 && bIndex === -1) return 0;
@@ -36,16 +57,16 @@ export async function searchWrapper(
     if (bIndex === -1) return -1;
     return aIndex - bIndex;
   });
-  return results.slice(0, maxResults);
 }
-
 /**
  * Searches Revit API documentation using the rvtdocs.com search endpoint
+ * This is necessary to keep because it makes "Properties"
  */
 export async function searchRvtDocsCom(
   query: string,
   year: number,
   maxResults: number,
+  types: ReadonlyArray<(typeof SearchResultTypes)[number]> = SearchResultTypes,
 ): Promise<SearchResult[]> {
   try {
     // Using the rvtdocs.com search API endpoint
@@ -91,7 +112,9 @@ export async function searchRvtDocsCom(
       }
     }
 
-    return results;
+    return results.filter((r) =>
+      types.includes(r.type as (typeof SearchResultTypes)[number])
+    );
   } catch (error) {
     console.error("Error searching Revit API docs using rvtdocs.com:", error);
     throw error;
@@ -105,6 +128,7 @@ export async function searchRevitApiDocsCom(
   query: string,
   year: number,
   maxResults: number,
+  types: ReadonlyArray<(typeof SearchResultTypes)[number]> = SearchResultTypes,
 ): Promise<SearchResult[]> {
   try {
     // Construct the search URL with current timestamp
@@ -137,7 +161,9 @@ export async function searchRevitApiDocsCom(
       }
     }
 
-    return results;
+    return results.filter((r) =>
+      types.includes(r.type as (typeof SearchResultTypes)[number])
+    );
   } catch (error) {
     console.error(
       "Error searching Revit API docs using revitapidocs.com:",

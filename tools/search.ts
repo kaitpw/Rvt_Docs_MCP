@@ -1,5 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { searchWrapper } from "../lib/searchWrapper.ts";
+import { searchWrapper } from "../lib/search.ts";
 import { validators } from "../types/toolValidators.ts";
 
 /**
@@ -7,17 +7,28 @@ import { validators } from "../types/toolValidators.ts";
  * @param server - The MCP server instance
  */
 export function createSearchTool(server: McpServer) {
-  server.tool(
+  server.registerTool(
     "search-docs",
     {
-      query: validators.query,
-      year: validators.year,
-      maxResults: validators.maxResults,
+      title: "Search All Revit API Documentation Entities",
+      description:
+        "Search for a Revit API entity based mostly on substring matching. Can accept '<Class>.<Member>' search format for 2025 and 2026.",
+      inputSchema: {
+        queryString: validators.queryString,
+        queryTypes: validators.queryTypes,
+        year: validators.year,
+        maxResults: validators.maxResults,
+      },
     },
-    async ({ query, year, maxResults }) => {
+    async ({ queryString, year, maxResults, queryTypes }) => {
       try {
         // Search for the query
-        const results = await searchWrapper(query, year, maxResults);
+        const results = await searchWrapper(
+          queryString,
+          year,
+          maxResults,
+          queryTypes,
+        );
 
         // return json of the search results
         return {

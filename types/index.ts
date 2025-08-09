@@ -35,16 +35,21 @@ export interface SearchResponseRevirApiDocsCom {
   };
 }
 
+export const SearchResultTypes = [
+  "Class",
+  "Constructor",
+  "Method",
+  "Methods",
+  "Property",
+  "Properties",
+  "Members",
+  "Interface",
+  "Enum",
+] as const;
+
 export const ZTypeFromImageUrl = z.string().transform((imageUrl) => {
-  if (imageUrl.includes("Class.gif")) return "Class";
-  if (imageUrl.includes("Constructor.gif")) return "Constructor";
-  if (imageUrl.includes("Method.gif")) return "Method";
-  if (imageUrl.includes("Property.gif")) return "Property";
-  if (imageUrl.includes("Properties.gif")) return "Properties";
-  if (imageUrl.includes("Members.gif")) return "Members";
-  if (imageUrl.includes("Interface.gif")) return "Interface";
-  if (imageUrl.includes("Enum.gif")) return "Enum";
+  for (const t of SearchResultTypes) {
+    if (imageUrl.includes(`${t}.gif`)) return t;
+  }
   return "Unknown";
 });
-
-export type SearchResultTypes = z.infer<typeof ZTypeFromImageUrl>;
