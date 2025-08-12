@@ -20,14 +20,16 @@ export function createSearchLibrary(server: McpServer) {
       title: toolTitles.searchLibrary,
       description: toolDescriptions.searchLibrary,
       inputSchema: {
-        queryString: z.string().describe("Semantic search query string."),
+        queryString: z.string().describe(
+          "Natural language search query for Revit API resources",
+        ),
         maxResults: toolValidators.maxResults,
         rewriteQuery: z.boolean().optional().default(true).describe(
-          "Rewrite the query to improve search results. In rare cases where search results are not as expected, this may be useful to disable.",
+          "Automatically improve search query for better results (disable if results are unexpected)",
         ),
         scoreThreshold: z.number().min(0).max(1).optional().default(0.6)
           .describe(
-            "Minimum similarity score between query and result. Lower values will return more, but less relevant, results.",
+            "Minimum relevance score (0.0-1.0). Lower values return more results but may be less relevant",
           ),
       },
     },
