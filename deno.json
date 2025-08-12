@@ -1,7 +1,7 @@
 {
   "tasks": {
-    "dev": "deno run --watch main.ts",
-    "local-compile": "deno compile -A main.ts"
+    "dev": "npx @modelcontextprotocol/inspector deno run -A --watch main.ts",
+    "compile": "deno compile -A main.ts"
   },
   "imports": {
     "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^1.17.2",
@@ -12,5 +12,6 @@
   },
   "compilerOptions": {
     "lib": ["deno.ns", "dom"]
-  }
+  },
+  "nodeModulesDir": "auto"
 }

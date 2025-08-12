@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { extractRvtDocsText } from "../lib/extractor.ts";
-import { searchWrapper } from "../lib/search.ts";
+import { extractRvtDocsText } from "../lib/extractDocs.ts";
+import { searchWrapper } from "../lib/searchDocs.ts";
 import {
   toolDescriptions,
   toolNames,

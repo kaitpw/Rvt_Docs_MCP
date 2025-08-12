@@ -5,17 +5,17 @@ import OpenAI from "@openai/openai";
  * @param apiKey - OpenAI API key
  * @param vectorStoreId - OpenAI vector store ID
  * @param queryString - Search query string
- * @param maxResults - Maximum number of results (default: 10, max: 50)
+ * @param maxResults - Maximum number of results
  * @param scoreThreshold - Minimum similarity score threshold (0.0 to 1.0)
  * @param rewriteQuery - Whether to automatically rewrite the query for better results
  * @returns Promise with search results
  */
-export async function openaiRag(
+export async function searchVectorLibrary(
   apiKey: string,
   vectorStoreId: string,
   queryString: string,
-  maxResults = 10,
-  scoreThreshold = 0.5,
+  maxResults: number,
+  scoreThreshold: number,
   rewriteQuery = true,
 ) {
   const client = new OpenAI({

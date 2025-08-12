@@ -1,9 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { createSearchDocs } from "./tools/search-docs.ts";
-import { createRetrieveFirstResultTool } from "./tools/retrieve-docs.ts";
-import { createRetrieveClassesMembersTool } from "./tools/retrieve-docs-class-members.ts";
-import { createExtractTool } from "./tools/retrieve-doc.ts";
+import { createRetrieveDocs } from "./tools/retrieve-docs.ts";
+import { createRetrieveDoc } from "./tools/retrieve-doc.ts";
 import { createSearchLibrary } from "./tools/search-library.ts";
 
 // Create the MCP server for Revit API documentation
@@ -14,9 +13,8 @@ const server = new McpServer({
 
 // Register tools
 createSearchDocs(server);
-createRetrieveFirstResultTool(server);
-createRetrieveClassesMembersTool(server);
-createExtractTool(server);
+createRetrieveDocs(server);
+createRetrieveDoc(server);
 createSearchLibrary(server);
 
 // Start the server with stdio transport

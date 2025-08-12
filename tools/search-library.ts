@@ -1,8 +1,13 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { openaiRag } from "../lib/openaiRag.ts";
+import { searchVectorLibrary } from "../lib/searchVectorLibrary.ts";
 import "@std/dotenv/load";
-import { toolDescriptions, toolNames, toolTitles } from "../lib/toolsCommon.ts";
+import {
+  toolDescriptions,
+  toolNames,
+  toolTitles,
+  toolValidators,
+} from "../lib/toolsCommon.ts";
 
 /**
  * Creates the OpenAI RAG tool for the MCP server
@@ -15,18 +20,17 @@ export function createSearchLibrary(server: McpServer) {
       title: toolTitles.searchLibrary,
       description: toolDescriptions.searchLibrary,
       inputSchema: {
-        queryString: z.string().describe("Search query string"),
-        maxResults: z.number().min(1).max(50).optional().default(10).describe(
-          "Maximum number of results (1-50)",
-        ),
-        scoreThreshold: z.number().min(0).max(1).optional().describe(
-          "Minimum similarity score threshold (0.0 to 1.0)",
-        ),
+        queryString: z.string().describe("Semantic search query string."),
+        maxResults: toolValidators.maxResults,
+        scoreThreshold: z.number().min(0).max(1).optional().default(0.5)
+          .describe(
+            "Minimum similarity score threshold (0.0 to 1.0)",
+          ),
       },
     },
     async ({
       queryString,
-      maxResults = 10,
+      maxResults,
       scoreThreshold,
     }) => {
       try {
@@ -37,8 +41,8 @@ export function createSearchLibrary(server: McpServer) {
             "OPENAI_API_KEY and OPENAI_VECTOR_STORE_ID must be set",
           );
         }
-        // Search using OpenAI vector store
-        const results = await openaiRag(
+
+        const results = await searchVectorLibrary(
           apiKey,
           vectorStoreId,
           queryString,
@@ -46,11 +50,10 @@ export function createSearchLibrary(server: McpServer) {
           scoreThreshold,
         );
 
-        // Return the raw search results as JSON
         return {
           content: [{
             type: "text",
-            text: JSON.stringify(results, null, 2),
+            text: JSON.stringify(results.data, null, 2),
           }],
         };
       } catch (error) {
