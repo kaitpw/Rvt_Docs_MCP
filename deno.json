@@ -6,6 +6,7 @@
   "imports": {
     "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^1.17.2",
     "@openai/openai": "jsr:@openai/openai@^5.12.2",
+    "@std/cli": "jsr:@std/cli@^1.0.21",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
     "parse5": "npm:parse5@^8.0.0",
     "zod": "npm:zod@^3.22.0"
