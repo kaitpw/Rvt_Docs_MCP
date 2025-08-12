@@ -22,9 +22,12 @@ export function createSearchLibrary(server: McpServer) {
       inputSchema: {
         queryString: z.string().describe("Semantic search query string."),
         maxResults: toolValidators.maxResults,
-        scoreThreshold: z.number().min(0).max(1).optional().default(0.5)
+        rewriteQuery: z.boolean().optional().default(true).describe(
+          "Rewrite the query to improve search results. In rare cases where search results are not as expected, this may be useful to disable.",
+        ),
+        scoreThreshold: z.number().min(0).max(1).optional().default(0.6)
           .describe(
-            "Minimum similarity score threshold (0.0 to 1.0)",
+            "Minimum similarity score between query and result. Lower values will return more, but less relevant, results.",
           ),
       },
     },
@@ -32,6 +35,7 @@ export function createSearchLibrary(server: McpServer) {
       queryString,
       maxResults,
       scoreThreshold,
+      rewriteQuery,
     }) => {
       try {
         const apiKey = Deno.env.get("OPENAI_API_KEY");
@@ -48,6 +52,7 @@ export function createSearchLibrary(server: McpServer) {
           queryString,
           maxResults,
           scoreThreshold,
+          rewriteQuery,
         );
 
         return {

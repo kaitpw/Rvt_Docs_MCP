@@ -1,6 +1,6 @@
 export interface SearchResult {
   title: string;
-  description: string;
+  description?: string;
   namespace?: string;
   type: string;
   url: string;

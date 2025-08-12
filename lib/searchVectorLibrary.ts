@@ -16,7 +16,7 @@ export async function searchVectorLibrary(
   queryString: string,
   maxResults: number,
   scoreThreshold: number,
-  rewriteQuery = true,
+  rewriteQuery: boolean,
 ) {
   const client = new OpenAI({
     apiKey: apiKey,

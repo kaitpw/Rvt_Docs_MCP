@@ -155,7 +155,6 @@ export async function searchRevitApiDocsCom(
         if (TypeFromTitle.parse(item.value) !== "Members") {
           results.push({
             title: item.value,
-            description: item.data.description ?? "",
             url: `/${year}/${item.data.url.split(".")[0]}`,
             type: TypeFromTitle.parse(item.value),
           });

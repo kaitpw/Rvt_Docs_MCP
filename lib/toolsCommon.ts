@@ -28,29 +28,38 @@ export const toolDescriptions = {
   test: "Test tool",
   retrieveDoc:
     `Retrieve a Revit API documentation *page* based on its *url slug*.
-    Use this only if you already know the entity's page's slug.
-    This is the most direct way to get the documentation for an entity, but an incorrect slug will error.
-    To obtain an API entity's url slug to use with the "${toolNames.retrieveDoc}" tool, use the "${toolNames.searchDocs}" tool.`,
+Use this only if you already know the entity's page's slug.
+This is the most direct way to get the documentation for an entity, but an incorrect slug will error.
+
+To obtain an API entity's url slug, you *MUST* use the "${toolNames.searchDocs}" tool.`,
   retrieveDocs:
     `Retrieve the Revit API documentation *pages (or page)* matching a search query. 
-    Use this tool to perform low-level exploration of the API. 
-    \n
-    Tips:
-    - set maxResults to 1 to get the first result only.
-    - set queryTypes to ["Methods", "Properties"] to get lists of class members`,
+Use this tool to perform low-level exploration of API entities.
+
+Tips:
+- set maxResults to 1 to get the first result only.
+- set queryTypes to ["Methods", "Properties"] to get lists of class members`,
   searchDocs:
     `Search for a Revit API entity in the documentation based on queryString subtring matching and queryTypes. 
-    Use this tool to perform high-level exploration of the API. 
-    This tool reveals the description, namespace, entity type, and url slug for an API entity. 
-    Search results may differ slightly, an entity's title, description, and namespace may look slightly different (or be empty) between results.
-    \n
-    API and/or docs structure is different between years so be flexible in your searching.
-    For example, below 2025, "Class" pages don't contain member information ("Methods" and "Properties" pages do though).
-    However, in 2025 and above, "Class" pages contain all member information ("Methods" and "Properties" pages still exist too).`,
+Use this tool to perform high-level exploration of API entities' descriptions, namespaces, entity type, and url slugs. 
+
+Notes: 
+- Search results may differ slightly between results: title, description, and namespace may look different (or not exist).
+- API and/or docs change very slightly between years so be flexible in your searching.
+  - For example, below 2025, "Class" pages don't contain member information. But in 2025 and above they do.
+  - Occasionally, API entities are deprecated.
+`,
   searchLibrary:
     `Search the library of content related to Revit and the Revit API. 
-    Use this tool to search through The Building Coder (TBC) blog posts, C# code examples, and PDF resources using natural language. 
-    This is ideal for finding practical troubleshooting common API issues, discovering undocumented/unintended API features, and learning how to use the API`,
+Use this tool to search through The Building Coder (TBC) blog posts, C# code examples, and PDF resources using natural language. 
+This is ideal for finding practical troubleshooting common API issues, discovering undocumented/unintended API features, and learning how to use the API
+
+This library of content is in an OpenAI-hosted vector store which enables vector search of the content. 
+As with any vector store, chunking is not always ideal. Results returned by this tool are raw chunks.
+
+Tips:
+- If a chunk cuts off relevant content, then read the content, contruct a more relevant query, and requery
+- If results are not as expected, toggle rewriteQuery and/or change scoreThreshold`,
 };
 
 /**
