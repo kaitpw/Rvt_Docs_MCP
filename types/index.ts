@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export interface SearchResult {
   title: string;
   description: string;
@@ -42,7 +40,6 @@ export const SearchResultTypes = [
   "Methods",
   "Property",
   "Properties",
-  "Members",
   "Interface",
   "Enumeration",
 ] as const;

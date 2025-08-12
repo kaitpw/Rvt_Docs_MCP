@@ -1,19 +1,24 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { extractRvtDocsText } from "../lib/extractor.ts";
-import { descriptions, validators } from "../lib/toolsCommon.ts";
+import {
+  toolDescriptions,
+  toolNames,
+  toolTitles,
+  toolValidators,
+} from "../lib/toolsCommon.ts";
 
 /**
  * Creates the extract documentation tool for the MCP server
  * @param server - The MCP server instance
  */
-export function createExtractTool(server: McpServer) {
+export function createRetrieveDoc(server: McpServer) {
   server.registerTool(
-    "extract-doc",
+    toolNames.retrieveDoc,
     {
-      title: "Extract Documentation Page",
-      description: descriptions.extract,
+      title: toolTitles.retrieveDoc,
+      description: toolDescriptions.retrieveDoc,
       inputSchema: {
-        urlSlug: validators.urlSlug,
+        urlSlug: toolValidators.urlSlug,
       },
     },
     async ({ urlSlug }) => {

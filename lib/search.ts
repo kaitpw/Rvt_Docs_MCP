@@ -179,7 +179,7 @@ const TypeFromTitle = z.string().transform((title) => {
   const parts = title.trim().split(/\s+/);
   const lastPart = parts[parts.length - 1];
 
-  for (const t of SearchResultTypes) {
+  for (const t of [...SearchResultTypes, "Members"]) {
     if (lastPart === t) return t;
   }
   return "Unknown";

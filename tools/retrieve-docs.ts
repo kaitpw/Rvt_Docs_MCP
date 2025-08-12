@@ -1,31 +1,36 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { searchWrapper } from "../lib/search.ts";
 import { extractRvtDocsText } from "../lib/extractor.ts";
-import { descriptions, validators } from "../lib/toolsCommon.ts";
+import { searchWrapper } from "../lib/search.ts";
+import {
+  toolDescriptions,
+  toolNames,
+  toolTitles,
+  toolValidators,
+} from "../lib/toolsCommon.ts";
 
 /**
- * Creates the search tool for the MCP server
+ * Creates the retrieve documentation tool for the MCP server
  * @param server - The MCP server instance
  */
-export function createRetrieveClassesMembersTool(server: McpServer) {
+export function createRetrieveDocs(server: McpServer) {
   server.registerTool(
-    "retrieve-docs-classes-members",
+    toolNames.retrieveDocs,
     {
-      title: "Retrieve Class Members",
-      description: descriptions.retrieveClassesMembers,
+      title: toolTitles.retrieveDocs,
+      description: toolDescriptions.retrieveDocs,
       inputSchema: {
-        queryString: validators.queryString,
-        year: validators.year,
-        maxResults: validators.maxResults,
+        queryString: toolValidators.queryString,
+        queryTypes: toolValidators.queryTypes,
+        year: toolValidators.year,
+        maxResults: toolValidators.maxResults,
       },
     },
-    async ({ queryString, year, maxResults }) => {
-      const types = ["Methods", "Properties"] as const;
+    async ({ queryString, queryTypes, year, maxResults }) => {
       const searches = await searchWrapper(
         queryString,
         year,
         maxResults,
-        types,
+        queryTypes,
       );
       const results = [];
       for (const s of searches) {
