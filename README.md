@@ -85,7 +85,9 @@ client and OS your using.
       "command": "path\\to\\Rvt_Docs_MCP-windows.exe"
     },
     "revit-api-docs (with search-library enabled)": {
-      "command": "path\\to\\Rvt_Docs_MCP-windows.exe -k 'sk-xxx' -v 'vs_xxx'"
+      "command": "path\\to\\Rvt_Docs_MCP-windows.exe -k 'sk-xxx' -v 'vs_xxx'",
+      "args": ["-v", "vs_xxx", "-k", "sk-proj-xxx"]
+
     }
   }
 }
