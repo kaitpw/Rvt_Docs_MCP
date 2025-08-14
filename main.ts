@@ -27,7 +27,15 @@ if (parsedArgs.help) {
   console.log(`
 Revit API Docs MCP Server
 
-Usage: Rvt_Docs_MCP [options]
+Usage: Rvt_Docs_MCP-<os-build> [options]
+  <os-build> is the operating system build of the machine running the server.
+  For example, on Windows, the os-build is "windows".
+  On older Mac machines, the os-build is "macos-x64".
+  On Mac Silicon machines, the os-build is "macos-arm64".
+  
+  The builds above are available on *github releases*. 
+  You can also build from source using \`deno task compile\`.
+  In this case the executable does not include the os-build in the name.
 
 Options:
   --openai-api-key, -k, --key <key>        OpenAI API key
@@ -35,10 +43,29 @@ Options:
   --help, -h                               Show this help message
 
 Examples:
-  Rvt_Docs_MCP --openai-api-key "sk-..." --openai-vector-store-id "vs_..."
-  Rvt_Docs_MCP -k "sk-..." -v "vs_..."
-  
+  Rvt_Docs_MCP-<os-build> --openai-api-key "sk-..." --openai-vector-store-id "vs_..."
+  Rvt_Docs_MCP-<os-build> -k "sk-..." -v "vs_..."
+
 Note: If not provided via CLI, these values will be read from environment variables.
+Note: If either -k/--openai-api-key or -v/--openai-vector-store-id are not available, the search-library tool will not be available.
+Note: Before adding a command (examples below) to your MCP config, you should first run the full comand with flags to verify that it works.
+
+JSON Integration Examples:
+\`\`\`json
+  {
+    "mcpServers": {
+      "revit-api-docs (macos-arm64)": {
+        "command": "path/to/Rvt_Docs_MCP-macos-arm64 -k sk-... -v vs_..."
+      },
+      "revit-api-docs (macos-x64)": {
+        "command": "path/to/Rvt_Docs_MCP-macos-x64 -k sk-... -v vs_..."
+      },
+      "revit-api-docs (windows)": {
+        "command": "path\to\Rvt_Docs_MCP-windows.exe -k sk-... -v vs_..."
+      }
+    }
+  }
+\`\`\`
 `);
   Deno.exit(0);
 }
@@ -52,18 +79,6 @@ if (parsedArgs["openai-vector-store-id"]) {
   Deno.env.set("OPENAI_VECTOR_STORE_ID", parsedArgs["openai-vector-store-id"]);
 }
 
-// Create the MCP server for Revit API documentation
-const server = new McpServer({
-  name: "revit-docs-mcp",
-  version: "1.0.0",
-});
-
-// Register tools
-createSearchDocs(server);
-createRetrieveDocs(server);
-createRetrieveDoc(server);
-createSearchLibrary(server);
-
 // Start the server with stdio transport
 async function main() {
   // Validate required environment variables
@@ -71,21 +86,29 @@ async function main() {
   const vectorStoreId = Deno.env.get("OPENAI_VECTOR_STORE_ID");
 
   if (!apiKey) {
-    console.error(
-      "Error: OPENAI_API_KEY is required. Set it via --openai-api-key or environment variable.",
+    console.warn(
+      "Warning: OPENAI_API_KEY is required. Set it via --openai-api-key or environment variable. search-library tool will not be available.",
     );
-    Deno.exit(1);
   }
 
   if (!vectorStoreId) {
-    console.error(
-      "Error: OPENAI_VECTOR_STORE_ID is required. Set it via --openai-vector-store-id or environment variable.",
+    console.warn(
+      "Warning: OPENAI_VECTOR_STORE_ID is required. Set it via --openai-vector-store-id or environment variable. search-library tool will not be available.",
     );
-    Deno.exit(1);
   }
+  // Create the MCP server for Revit API documentation
+  const server = new McpServer({
+    name: "revit-docs-mcp",
+    version: "1.0.0",
+  });
+  // Register tools
+  createSearchDocs(server);
+  createRetrieveDocs(server);
+  createRetrieveDoc(server);
+  if (apiKey && vectorStoreId) createSearchLibrary(server);
 
   console.error("Starting Revit API Docs MCP Server...");
-  console.error(`Using OpenAI API Key: ${apiKey.substring(0, 8)}...`);
+  console.error(`Using OpenAI API Key: ${apiKey?.substring(0, 8)}...`);
   console.error(`Using Vector Store ID: ${vectorStoreId}`);
 
   const transport = new StdioServerTransport();
