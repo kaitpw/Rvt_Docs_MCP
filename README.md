@@ -118,3 +118,6 @@ The source code should hopefully be self explanatory and I'm open to any new
 tools being added. My only stipulation is that you must set up an easy pipeline
 to make the tool usable if it requires further setup (for example
 [Rvt_Docs_Tbc_Embedder](https://github.com/kaitpw/Rvt_Docs_TBC_Embedder)).
+
+A simple cross platform compilation is set up with Deno in Github workflows. To
+trigger a build make a new git tag. Then push with `git push --follow-tags`.
