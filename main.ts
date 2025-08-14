@@ -84,6 +84,8 @@ async function main() {
   // Validate required environment variables
   const apiKey = Deno.env.get("OPENAI_API_KEY");
   const vectorStoreId = Deno.env.get("OPENAI_VECTOR_STORE_ID");
+  console.info(`Using OpenAI API Key: ${apiKey?.substring(0, 8)}...`);
+  console.info(`Using Vector Store ID: ${vectorStoreId}`);
 
   if (!apiKey) {
     console.warn(
@@ -96,24 +98,23 @@ async function main() {
       "Warning: OPENAI_VECTOR_STORE_ID is required. Set it via --openai-vector-store-id or environment variable. search-library tool will not be available.",
     );
   }
-  // Create the MCP server for Revit API documentation
+
   const server = new McpServer({
     name: "revit-docs-mcp",
     version: "1.0.0",
   });
-  // Register tools
+
   createSearchDocs(server);
   createRetrieveDocs(server);
   createRetrieveDoc(server);
-  if (apiKey && vectorStoreId) createSearchLibrary(server);
-
-  console.error("Starting Revit API Docs MCP Server...");
-  console.error(`Using OpenAI API Key: ${apiKey?.substring(0, 8)}...`);
-  console.error(`Using Vector Store ID: ${vectorStoreId}`);
+  if (apiKey && vectorStoreId) {
+    console.info("✅ search-library tool enabled");
+    createSearchLibrary(server);
+  }
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Revit API Docs MCP Server is running...");
+  console.info("Revit API Docs MCP Server is running...");
 }
 
 main().catch((error) => {
