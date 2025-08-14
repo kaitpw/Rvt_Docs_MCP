@@ -1,31 +1,22 @@
-# Revit API Docs MCP Server
+# Revit API MCP Server
 
-This MCP server provides LLMs access to Revit API documentation and other
-related content (see
-[Rvt_Docs_Tbc_Embedder](https://github.com/kaitpw/Rvt_Docs_TBC_Embedder)). Under
-the hood, it uses both rvtdocs.com and revitapidocs.com, and if enabled, the
+Because of the absurd surface area of the Revit API, AI often hallucinates classes, methods, properties, or even entire namespaces. Furthermore, useful, but unofficial or uncommon uses of the API are so niche that AI's have no knowledge of it. To curb this, this MCP server provides LLMs access to Revit API documentation and other
+related content (see [Rvt_Docs_Tbc_Embedder](https://github.com/kaitpw/Rvt_Docs_TBC_Embedder)). Under the hood, it uses both rvtdocs.com and revitapidocs.com, and if enabled, the
 Building Coder Blog.
+
+Simply ask your MCP client what the Revit API docs say about something and it will use a combination of tools to explore the API docs on its own.
 
 ## Features
 
-- **Search Revit API**: Search for classes, methods, and properties (or any API
-  entity) in the Revit API documentation.
-- **Access Documentation**: Retrieve the content of an API entity's page either
-  via the url or the entities name.
-- **Search/Access TBC Blog**: Perform semantic search over a vector space of The
-  Building Coder blog embeddings.
+- **Search Revit API**: Search for classes, methods, and properties (or any API entity) in the Revit API documentation.
+- **Access Documentation**: Retrieve the content of an API entity's docs page either via the url or the entities name.
+- **Search/Access TBC Blog**: Perform semantic search over a vector space of The Building Coder blog embeddings.
 
 ## Features (Planned)
 
-- **Code Examples**: Get code examples for Revit API usage and make them
-  accessible. See
-  [RevitSdkSamples](https://github.com/jeremytammik/RevitSdkSamples). Maybe even
-  entire repos, for example from ricuan-io, Nice3point, chuongmep, and of course
-  jeremytammik.
-- **More Resources**: Add other content to the vector store. Candidates include
-  tbc-related pdfs, random blog posts, and Autodesk University resources
-- **Caching (Unlikely)**: Cache responses to reduce traffic to the api doc
-  sites.
+- **Code Examples**: Get code examples for Revit API usage and make them accessible. See [RevitSdkSamples](https://github.com/jeremytammik/RevitSdkSamples). Or maybe even entire repos, like those from ricuan-io, Nice3point, chuongmep, and of course jeremytammik.
+- **More Resources**: Add other content to the vector store. Candidates include tbc-related pdfs, random blog posts, and Autodesk University resources.
+- **Caching (Unlikely)**: Cache responses to reduce traffic to the api doc sites.
 
 ## Setup
 
