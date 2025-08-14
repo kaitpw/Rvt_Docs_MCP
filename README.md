@@ -28,7 +28,7 @@ will use a combination of tools to explore the API docs on its own.
 - **Code Examples**: Get code examples for Revit API usage and make them
   accessible. See
   [RevitSdkSamples](https://github.com/jeremytammik/RevitSdkSamples). Or maybe
-  even entire repos, like those from ricuan-io, Nice3point, chuongmep, and of
+  even entire repos, like those from ricuan-io, Nice3point, chuongmep, kilkellym, and of
   course jeremytammik.
 - **More Resources**: Add other content to the vector store. Candidates include
   tbc-related pdfs, random blog posts, and Autodesk University resources.
