@@ -46,8 +46,8 @@ export const toolDescriptions = {
 **Returns:** Entity names, descriptions, namespaces, types, and URL slugs for further exploration.
 
 **Notes:**
-- API documentation varies between years (2025+ includes member info in Class pages)
-- Some entities may be deprecated between versions
+- API documentation varies between version years (2025+ includes member info in Class pages)
+- Some entities may be deprecated between version years
 - Search results may have slight variations in formatting`,
   searchLibrary:
     `Searches a comprehensive library of Revit API resources including The Building Coder blog posts, C# code examples, PDF resources, and practical guides.
@@ -92,9 +92,9 @@ export const toolValidators = {
           classMemberPattern.test(trimmed) ||
           constructorPattern.test(trimmed);
       },
-      `Must match one of: "Name", "Class.Member" (2025+), or "Constructor(arg1, ...)". Only single spaces allowed, and only after commas.`,
+      `Must match one of: "AnyName", "Class.Member", or "Constructor(arg1, ...". Only single spaces allowed, and only after commas.`,
     )
     .describe(
-      `Search query for Revit API entities. Formats: "Name", "Class.Member", or "Constructor(arg1, ...)"`,
+      `Search query for Revit API entities. Valid formats: "AnyName", "Class.Member" (2025+ only), or "Constructor(arg1, ...". NOT a phrase, sentence, or natural language query.`,
     ),
 };
